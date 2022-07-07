@@ -1,24 +1,32 @@
-import { useState } from 'react';
-import { Message, getMessage } from '../data/messages';
+import { useState } from "react";
+import { Message, getMessage } from "../data/messages";
 import {
   IonBackButton,
+  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
+  IonModal,
   IonNote,
   IonPage,
+  IonTitle,
   IonToolbar,
   useIonViewWillEnter,
-} from '@ionic/react';
-import { personCircle } from 'ionicons/icons';
-import { useParams } from 'react-router';
-import './ViewMessage.css';
+} from "@ionic/react";
+import { personCircle } from "ionicons/icons";
+import { useParams } from "react-router";
+import "./ViewMessage.css";
+import CustomModal from "../components/CustomModal";
 
 function ViewMessage() {
   const [message, setMessage] = useState<Message>();
+
+  const [showIonModal, setShowIonModal] = useState(false);
+  const [showCustomModal, setShowCustomModal] = useState(false);
+
   const params = useParams<{ id: string }>();
 
   useIonViewWillEnter(() => {
@@ -39,6 +47,12 @@ function ViewMessage() {
       <IonContent fullscreen>
         {message ? (
           <>
+            <IonButton color="danger" onClick={() => setShowIonModal(true)}>
+              Show IonModal
+            </IonButton>
+            <IonButton onClick={() => setShowCustomModal(true)}>
+              Show Custom Modal
+            </IonButton>
             <IonItem>
               <IonIcon icon={personCircle} color="primary"></IonIcon>
               <IonLabel className="ion-text-wrap">
@@ -71,6 +85,39 @@ function ViewMessage() {
           <div>Message not found</div>
         )}
       </IonContent>
+      {showIonModal && (
+        <IonModal isOpen={true} onDidDismiss={() => setShowIonModal(false)}>
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Content</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent fullscreen>
+            Ionic Modal Content here!
+            <IonButton color="danger" onClick={() => setShowIonModal(false)}>
+              Hide Modal (will break)
+            </IonButton>
+          </IonContent>
+        </IonModal>
+      )}
+      {showCustomModal && (
+        <CustomModal
+          isOpen={true}
+          onDidDismiss={() => setShowCustomModal(false)}
+        >
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Custom Modal</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent fullscreen>
+            Custom Modal Content here!
+            <IonButton onClick={() => setShowCustomModal(false)}>
+              Hide Modal
+            </IonButton>
+          </IonContent>
+        </CustomModal>
+      )}
     </IonPage>
   );
 }
